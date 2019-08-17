@@ -12,7 +12,7 @@ import java.util.List;
 
 public class Road extends JPanel implements ActionListener, Runnable {
 
-    Timer mainTimer = new Timer(20, this);
+    Timer mainTimer = new Timer(25, this);
     Image img = new ImageIcon(getClass().getClassLoader().getResource("resources/road_ch.jpg")).getImage();
     Image boom = new ImageIcon(getClass().getClassLoader().getResource("resources/boom_ch.png")).getImage();
     Player p = new Player();
@@ -80,9 +80,9 @@ public class Road extends JPanel implements ActionListener, Runnable {
     @Override
     public void actionPerformed(ActionEvent e) {
         p.move();
-        repaint();
         testCollisionsWithEnemies();
         testWin();
+        repaint();
     }
 
     private void testCollisionsWithEnemies() {
@@ -90,7 +90,7 @@ public class Road extends JPanel implements ActionListener, Runnable {
         while (enem.hasNext()) {
             Enemy e = enem.next();
             if (p.getRect().intersects(e.getRect())) {
-                JOptionPane.showMessageDialog(this, "You're lose!");
+                JOptionPane.showMessageDialog(this, "Это фиаско, братан!".toUpperCase());
                 audioThread.stop();
                 enemiesFactory.stop();
                 mainTimer.stop();
@@ -110,47 +110,49 @@ public class Road extends JPanel implements ActionListener, Runnable {
     }
 
     private void createEnemies(Graphics g) {
-        Iterator<Enemy> enem = enemies.iterator();
-        while (enem.hasNext()) {
-            Enemy e = enem.next();
+        for (int i = 0; i < enemies.size(); i++) {
+            Enemy e = enemies.get(i);
             if (e.x >= 2400 || e.x <= -2400)
-                enem.remove();
+                enemies.remove(e);
             else {
                 e.move();
                 g.drawImage(e.img, e.x, e.y, null);
             }
         }
+
+//        Iterator<Enemy> enem = enemies.iterator();
+//        while (enem.hasNext()) {
+//            Enemy e = enem.next();
+//            if (e.x >= 2400 || e.x <= -2400)
+//                enem.remove();
+//            else {
+//                e.move();
+//                g.drawImage(e.img, e.x, e.y, null);
+//            }
+//        }
     }
 
     private void createBullets(Graphics g) {
-        Iterator<Bullet> bul = bullets.iterator();
-        while (bul.hasNext()) {
-            Bullet bu = bul.next();
-            if (bu.x > 2400)
-                bul.remove();
+        for (int i = 0; i < bullets.size(); i++) {
+            Bullet b = bullets.get(i);
+            if (b.x > 2400)
+                bullets.remove(b);
             else {
-                bu.move();
-                g.drawImage(bu.nuke, bu.x, bu.y, null);
+                b.move();
+                g.drawImage(b.nuke, b.x, b.y, null);
             }
         }
     }
 
     private void deadShot(Graphics g) {
-        Iterator<Bullet> bul = bullets.iterator();
-        Iterator<Enemy> enem = enemies.iterator();
-        while (bul.hasNext()) {
-            Bullet bu = bul.next();
-            while (enem.hasNext()) {
-                Enemy en = enem.next();
-                if (bu.getRect().intersects(en.getRect())) {
-                    enem.remove();
-                    bul.remove();
-                    g.drawImage(boom, en.x, en.y, null);
-                    try {
-                        Thread.sleep(20);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+        for (int i = 0; i < bullets.size(); i++) {
+            for (int j = 0; j < enemies.size(); j++) {
+                if (bullets.get(i).getRect().intersects(enemies.get(j).getRect())) {
+                    int x = enemies.get(j).x;
+                    int y = enemies.get(j).y;
+                    bullets.remove(i);
+                    enemies.remove(j);
+                    g.drawImage(boom, x, y, null);
                 }
             }
         }

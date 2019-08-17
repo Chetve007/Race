@@ -23,6 +23,6 @@ public class Bullet {
     }
 
     public void move() {
-        x = x + road.p.v + 5;
+        x = x + 25;
     }
 }

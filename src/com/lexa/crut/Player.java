@@ -50,6 +50,10 @@ public class Player {
         layer2 -= v;
     }
 
+    public void stop() {
+        v = 0;
+    }
+
 
     public void keyPressed(KeyEvent e) {
         int key = e.getKeyCode();
@@ -68,9 +72,6 @@ public class Player {
                 dy = -7;
                 image = imageDown;
                 break;
-//            case KeyEvent.VK_SPACE:
-//                new Bullet(this.x, this.y, this.v);
-//                break;
         }
     }
 
